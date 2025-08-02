@@ -155,5 +155,3 @@ Gunakan file `docker-compose.yml` (lihat repo utama) untuk menjalankan:
 ```bash
 docker compose up --build
 ```
-
----
