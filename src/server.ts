@@ -3,14 +3,17 @@ import http from 'http';
 import { Server as IOServer } from 'socket.io';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
-import authRoutes from './routes/auth';
 import cookieParser from 'cookie-parser';
+import { setupSocketServer } from './sockets';
+import authRoutes from './routes/auth';
+import roomRoutes from './routes/room';
 
 dotenv.config();
 export const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/auth', authRoutes);
+app.use('/api/rooms', roomRoutes);
 
 const prisma = new PrismaClient();
 
@@ -26,6 +29,8 @@ app.get('/api/health', async (_req, res) => {
 
 const server = http.createServer(app);
 const io = new IOServer(server, { path: '/ws' });
+
+setupSocketServer(io);
 
 io.on('connection', (socket) => {
   console.log('client connected:', socket.id);

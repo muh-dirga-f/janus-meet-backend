@@ -103,6 +103,9 @@ describe('Auth Endpoints', () => {
   });
 
   it('POST /api/auth/refresh → should 403 for expired token', async () => {
+    const originalError = console.error;
+    console.error = jest.fn(); // 🔇 mute error log
+
     // Buat refresh token kadaluarsa (1 detik)
     const payload = {
       id: 'dummy-id',
@@ -124,6 +127,8 @@ describe('Auth Endpoints', () => {
       .expect(403);
 
     expect(res.body).toHaveProperty('message', 'Invalid refresh token');
+
+    console.error = originalError; // restore
   });
 
   it('GET /api/auth/me → should return user info with valid Bearer token', async () => {
